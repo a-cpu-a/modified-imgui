@@ -754,7 +754,11 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
     {
         // Anti-aliased stroke
         const float AA_SIZE = _FringeScale;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+        const ImU32 col_trans = 0;
+#else
         const ImU32 col_trans = col & ~IM_COL32_A_MASK;
+#endif
 
         // Thicknesses <1.0 should behave like thickness 1.0
         thickness = ImMax(thickness, 1.0f);
@@ -1016,7 +1020,11 @@ void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_coun
     {
         // Anti-aliased Fill
         const float AA_SIZE = _FringeScale;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+        const ImU32 col_trans = 0;
+#else
         const ImU32 col_trans = col & ~IM_COL32_A_MASK;
+#endif
         const int idx_count = (points_count - 2)*3 + points_count * 6;
         const int vtx_count = (points_count * 2);
         PrimReserve(idx_count, vtx_count);

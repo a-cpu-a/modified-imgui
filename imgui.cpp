@@ -3076,7 +3076,15 @@ ImU32 ImGui::GetColorU32(ImGuiCol idx, float alpha_mul)
 {
     ImGuiStyle& style = GImGui->Style;
     ImVec4 c = style.Colors[idx];
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    const float alpha = style.Alpha * alpha_mul;
+    c.x *= alpha;
+    c.y *= alpha;
+    c.z *= alpha;
+    c.w *= alpha;
+#else
     c.w *= style.Alpha * alpha_mul;
+#endif
     return ColorConvertFloat4ToU32(c);
 }
 
@@ -3084,6 +3092,11 @@ ImU32 ImGui::GetColorU32(const ImVec4& col)
 {
     ImGuiStyle& style = GImGui->Style;
     ImVec4 c = col;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    c.x *= style.Alpha;
+    c.y *= style.Alpha;
+    c.z *= style.Alpha;
+#endif
     c.w *= style.Alpha;
     return ColorConvertFloat4ToU32(c);
 }
@@ -3101,7 +3114,20 @@ ImU32 ImGui::GetColorU32(ImU32 col)
         return col;
     ImU32 a = (col & IM_COL32_A_MASK) >> IM_COL32_A_SHIFT;
     a = (ImU32)(a * style.Alpha); // We don't need to clamp 0..255 because Style.Alpha is in 0..1 range.
+
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    ImU32 r = (col & IM_COL32_R_MASK) >> IM_COL32_R_SHIFT;
+    ImU32 g = (col & IM_COL32_G_MASK) >> IM_COL32_G_SHIFT;
+    ImU32 b = (col & IM_COL32_B_MASK) >> IM_COL32_B_SHIFT;
+
+    r = (ImU32)(r * style.Alpha);
+    g = (ImU32)(g * style.Alpha);
+    b = (ImU32)(b * style.Alpha);
+
+    return (r << IM_COL32_R_SHIFT) | (g << IM_COL32_G_SHIFT) | (b << IM_COL32_B_SHIFT) | (a << IM_COL32_A_SHIFT);
+#else
     return (col & ~IM_COL32_A_MASK) | (a << IM_COL32_A_SHIFT);
+#endif
 }
 
 // FIXME: This may incur a round-trip (if the end user got their data from a float4) but eventually we aim to store the in-flight colors as ImU32
