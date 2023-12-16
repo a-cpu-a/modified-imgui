@@ -171,6 +171,15 @@ using namespace IMGUI_STB_NAMESPACE;
 // [SECTION] Style functions
 //-----------------------------------------------------------------------------
 
+void ImGui::PremultiplyStyleColors(ImVec4* colors)
+{
+    for (ImGuiCol i = 0; i <= ImGuiCol_COUNT; i++)
+    {
+        const ImVec4 color = colors[i];
+        colors[i] = IM_PREMULTIPLY_COL(color);
+    }
+}
+
 void ImGui::StyleColorsDark(ImGuiStyle* dst)
 {
     ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
@@ -231,6 +240,10 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    ImGui::PremultiplyStyleColors(colors);
+#endif
 }
 
 void ImGui::StyleColorsClassic(ImGuiStyle* dst)
@@ -293,6 +306,10 @@ void ImGui::StyleColorsClassic(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    ImGui::PremultiplyStyleColors(colors);
+#endif
 }
 
 // Those light colors are better suited with a thicker font than the default one + FrameBorder
@@ -356,6 +373,10 @@ void ImGui::StyleColorsLight(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    ImGui::PremultiplyStyleColors(colors);
+#endif
 }
 
 //-----------------------------------------------------------------------------

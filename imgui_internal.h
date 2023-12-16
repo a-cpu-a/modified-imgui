@@ -280,6 +280,7 @@ namespace ImStb
 #define IM_ROUND(_VAL)                  ((float)(int)((_VAL) + 0.5f))                           //
 #define IM_STRINGIFY_HELPER(_X)         #_X
 #define IM_STRINGIFY(_X)                IM_STRINGIFY_HELPER(_X)                                 // Preprocessor idiom to stringify e.g. an integer.
+#define IM_PREMULTIPLY_COL(_X)          ImVec4(_X.x*_X.w,_X.y*_X.w,_X.z*_X.w,_X.w)              //
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #define IM_FLOOR IM_TRUNC
 #endif
