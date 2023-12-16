@@ -1493,8 +1493,13 @@ void ImDrawList::AddRectFilled(const ImVec2& p_min, const ImVec2& p_max, ImU32 c
 // p_min = upper-left, p_max = lower-right
 void ImDrawList::AddRectFilledMultiColor(const ImVec2& p_min, const ImVec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if ((col_upr_left | col_upr_right | col_bot_right | col_bot_left) == 0)
+        return;
+#else
     if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     const ImVec2 uv = _Data->TexUvWhitePixel;
     PrimReserve(6, 4);
@@ -2108,6 +2113,8 @@ void ImGui::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int ve
     const int col_delta_r = ((int)(col1 >> IM_COL32_R_SHIFT) & 0xFF) - col0_r;
     const int col_delta_g = ((int)(col1 >> IM_COL32_G_SHIFT) & 0xFF) - col0_g;
     const int col_delta_b = ((int)(col1 >> IM_COL32_B_SHIFT) & 0xFF) - col0_b;
+
+
     for (ImDrawVert* vert = vert_start; vert < vert_end; vert++)
     {
         float d = ImDot(vert->pos - gradient_p0, gradient_extent);
@@ -2115,6 +2122,13 @@ void ImGui::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int ve
         int r = (int)(col0_r + col_delta_r * t);
         int g = (int)(col0_g + col_delta_g * t);
         int b = (int)(col0_b + col_delta_b * t);
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+        const float alpha = float((vert->col >> IM_COL32_A_SHIFT) & 0xFF) / 0xFF;
+
+        r = int(r * alpha); //Assuming alpha is 0...1, clamping isnt needed
+        g = int(g * alpha);
+        b = int(b * alpha);
+#endif
         vert->col = (r << IM_COL32_R_SHIFT) | (g << IM_COL32_G_SHIFT) | (b << IM_COL32_B_SHIFT) | (vert->col & IM_COL32_A_MASK);
     }
 }
@@ -3841,7 +3855,7 @@ void ImFont::RenderChar(ImDrawList* draw_list, float size, const ImVec2& pos, Im
     if (!glyph || !glyph->Visible)
         return;
     if (glyph->Colored)
-        col |= ~IM_COL32_A_MASK;
+        col = IM_MAKE_WHITE(col);
     float scale = (size >= 0.0f) ? (size / FontSize) : 1.0f;
     float x = IM_TRUNC(pos.x);
     float y = IM_TRUNC(pos.y);
@@ -3913,7 +3927,7 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, Im
     ImDrawIdx*   idx_write = draw_list->_IdxWritePtr;
     unsigned int vtx_index = draw_list->_VtxCurrentIdx;
 
-    const ImU32 col_untinted = col | ~IM_COL32_A_MASK;
+    const ImU32 col_untinted = IM_MAKE_WHITE(col);
     const char* word_wrap_eol = NULL;
 
     while (s < text_end)

@@ -280,7 +280,16 @@ namespace ImStb
 #define IM_ROUND(_VAL)                  ((float)(int)((_VAL) + 0.5f))                           //
 #define IM_STRINGIFY_HELPER(_X)         #_X
 #define IM_STRINGIFY(_X)                IM_STRINGIFY_HELPER(_X)                                 // Preprocessor idiom to stringify e.g. an integer.
-#define IM_PREMULTIPLY_COL(_X)          ImVec4(_X.x*_X.w,_X.y*_X.w,_X.z*_X.w,_X.w)              //
+
+#define IM_PREMULTIPLY_COL(_X)          ImVec4(_X.x*_X.w,_X.y*_X.w,_X.z*_X.w,_X.w)
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+#define IM_MAKE_OPAQUE(_X)              ImUndoPremultiply(_X)
+#define IM_MAKE_WHITE(_X)              ImWhitePremultiply(_X)
+#else
+#define IM_MAKE_OPAQUE(_X)              (_X | IM_COL32_A_MASK)
+#define IM_MAKE_WHITE(_X)              (_X | ~IM_COL32_A_MASK)
+#endif
+
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #define IM_FLOOR IM_TRUNC
 #endif
@@ -495,6 +504,17 @@ static inline float  ImLinearSweep(float current, float target, float speed)    
 static inline ImVec2 ImMul(const ImVec2& lhs, const ImVec2& rhs)                { return ImVec2(lhs.x * rhs.x, lhs.y * rhs.y); }
 static inline bool   ImIsFloatAboveGuaranteedIntegerPrecision(float f)          { return f <= -16777216 || f >= 16777216; }
 static inline float  ImExponentialMovingAverage(float avg, float sample, int n) { avg -= avg / n; avg += sample / n; return avg; }
+static inline ImU32  ImUndoPremultiply(ImU32 c) {
+    float alphaR = 0xFF / (float)((c & IM_COL32_A_MASK) >> IM_COL32_A_SHIFT);
+    ImU32 r = ImU32(((c & IM_COL32_R_MASK) >> IM_COL32_R_SHIFT) * alphaR);
+    ImU32 g = ImU32(((c & IM_COL32_G_MASK) >> IM_COL32_G_SHIFT) * alphaR);
+    ImU32 b = ImU32(((c & IM_COL32_B_MASK) >> IM_COL32_B_SHIFT) * alphaR);
+    return (r << IM_COL32_R_SHIFT) | (g << IM_COL32_G_SHIFT) | (b << IM_COL32_B_SHIFT) | IM_COL32_A_MASK;
+}
+static inline ImU32  ImWhitePremultiply(ImU32 c) {
+    const ImU32 alpha = (c & IM_COL32_A_MASK) >> IM_COL32_A_SHIFT;
+    return (alpha << IM_COL32_R_SHIFT) | (alpha << IM_COL32_G_SHIFT) | (alpha << IM_COL32_B_SHIFT) | (alpha << IM_COL32_A_SHIFT);
+}
 IM_MSVC_RUNTIME_CHECKS_RESTORE
 
 // Helpers: Geometry
