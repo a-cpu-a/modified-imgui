@@ -60,6 +60,9 @@
 //---- Use premultiplied alpha for rendering
 #define IMGUI_USE_PREMULTIPLIED_ALPHA
 
+//---- Use premultiplied alpha for rendering the font textures
+//#define IMGUI_USE_PREMULTIPLIED_ALPHA_FONT_TEX
+
 //---- Use 32-bit for ImWchar (default is 16-bit) to support Unicode planes 1-16. (e.g. point beyond 0xFFFF like emoticons, dingbats, symbols, shapes, ancient languages, etc...)
 #define IMGUI_USE_WCHAR32
 

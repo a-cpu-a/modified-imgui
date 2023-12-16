@@ -2302,8 +2302,13 @@ void    ImFontAtlas::GetTexDataAsRGBA32(unsigned char** out_pixels, int* out_wid
             TexPixelsRGBA32 = (unsigned int*)IM_ALLOC((size_t)TexWidth * (size_t)TexHeight * 4);
             const unsigned char* src = pixels;
             unsigned int* dst = TexPixelsRGBA32;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA_FONT_TEX
+            for (int n = TexWidth * TexHeight; n > 0; n--)
+                *dst++ = IM_COL32((unsigned int)(*src), (unsigned int)(*src), (unsigned int)(*src), (unsigned int)(*src++));
+#else
             for (int n = TexWidth * TexHeight; n > 0; n--)
                 *dst++ = IM_COL32(255, 255, 255, (unsigned int)(*src++));
+#endif
         }
     }
 
