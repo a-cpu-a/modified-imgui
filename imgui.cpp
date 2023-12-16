@@ -5132,8 +5132,13 @@ static ImGuiWindow* FindFrontMostVisibleChildWindow(ImGuiWindow* window)
 
 static void ImGui::RenderDimmedBackgroundBehindWindow(ImGuiWindow* window, ImU32 col)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     ImGuiViewportP* viewport = window->Viewport;
     ImRect viewport_rect = viewport->GetMainRect();
@@ -6537,8 +6542,13 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
             for (int resize_grip_n = 0; resize_grip_n < resize_grip_count; resize_grip_n++)
             {
                 const ImU32 col = resize_grip_col[resize_grip_n];
-                if ((col & IM_COL32_A_MASK) == 0)
-                    continue;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+				if (col == 0)
+					return;
+#else
+				if ((col & IM_COL32_A_MASK) == 0)
+					return;
+#endif
                 const ImGuiResizeGripDef& grip = resize_grip_def[resize_grip_n];
                 const ImVec2 corner = ImLerp(window->Pos, window->Pos + window->Size, grip.CornerPosN);
                 window->DrawList->PathLineTo(corner + grip.InnerDir * ((resize_grip_n & 1) ? ImVec2(window_border_size, resize_grip_draw_size) : ImVec2(resize_grip_draw_size, window_border_size)));

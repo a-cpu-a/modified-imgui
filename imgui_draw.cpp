@@ -714,8 +714,15 @@ void ImDrawList::PrimQuadUV(const ImVec2& a, const ImVec2& b, const ImVec2& c, c
 // We avoid using the ImVec2 math operators here to reduce cost to a minimum for debug/non-inlined builds.
 void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32 col, ImDrawFlags flags, float thickness)
 {
-    if (points_count < 2 || (col & IM_COL32_A_MASK) == 0)
+    if (points_count < 2)
         return;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
+    if ((col & IM_COL32_A_MASK) == 0)
+        return;
+#endif
 
     const bool closed = (flags & ImDrawFlags_Closed) != 0;
     const ImVec2 opaque_uv = _Data->TexUvWhitePixel;
@@ -972,8 +979,15 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
 // - Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
 void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_count, ImU32 col)
 {
-    if (points_count < 3 || (col & IM_COL32_A_MASK) == 0)
+    if (points_count < 3)
         return;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
+    if ((col & IM_COL32_A_MASK) == 0)
+        return;
+#endif
 
     const ImVec2 uv = _Data->TexUvWhitePixel;
 
@@ -1393,8 +1407,14 @@ void ImDrawList::PathRect(const ImVec2& a, const ImVec2& b, float rounding, ImDr
 
 void ImDrawList::AddLine(const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
+	
     PathLineTo(p1 + ImVec2(0.5f, 0.5f));
     PathLineTo(p2 + ImVec2(0.5f, 0.5f));
     PathStroke(col, 0, thickness);
@@ -1404,8 +1424,14 @@ void ImDrawList::AddLine(const ImVec2& p1, const ImVec2& p2, ImU32 col, float th
 // Note we don't render 1 pixels sized rectangles properly.
 void ImDrawList::AddRect(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
+	
     if (Flags & ImDrawListFlags_AntiAliasedLines)
         PathRect(p_min + ImVec2(0.50f, 0.50f), p_max - ImVec2(0.50f, 0.50f), rounding, flags);
     else
@@ -1415,8 +1441,14 @@ void ImDrawList::AddRect(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, fl
 
 void ImDrawList::AddRectFilled(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding, ImDrawFlags flags)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
+	
     if (rounding < 0.5f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone)
     {
         PrimReserve(6, 4);
@@ -1447,8 +1479,13 @@ void ImDrawList::AddRectFilledMultiColor(const ImVec2& p_min, const ImVec2& p_ma
 
 void ImDrawList::AddQuad(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     PathLineTo(p1);
     PathLineTo(p2);
@@ -1459,8 +1496,13 @@ void ImDrawList::AddQuad(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, c
 
 void ImDrawList::AddQuadFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     PathLineTo(p1);
     PathLineTo(p2);
@@ -1471,8 +1513,13 @@ void ImDrawList::AddQuadFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2&
 
 void ImDrawList::AddTriangle(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     PathLineTo(p1);
     PathLineTo(p2);
@@ -1482,8 +1529,13 @@ void ImDrawList::AddTriangle(const ImVec2& p1, const ImVec2& p2, const ImVec2& p
 
 void ImDrawList::AddTriangleFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     PathLineTo(p1);
     PathLineTo(p2);
@@ -1493,7 +1545,14 @@ void ImDrawList::AddTriangleFilled(const ImVec2& p1, const ImVec2& p2, const ImV
 
 void ImDrawList::AddCircle(const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
+    if ((col & IM_COL32_A_MASK) == 0)
+        return;
+#endif
+    if (radius < 0.5f)
         return;
 
     if (num_segments <= 0)
@@ -1517,7 +1576,14 @@ void ImDrawList::AddCircle(const ImVec2& center, float radius, ImU32 col, int nu
 
 void ImDrawList::AddCircleFilled(const ImVec2& center, float radius, ImU32 col, int num_segments)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || radius < 0.5f)
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
+    if ((col & IM_COL32_A_MASK) == 0)
+        return;
+#endif
+    if (radius < 0.5f)
         return;
 
     if (num_segments <= 0)
@@ -1542,7 +1608,14 @@ void ImDrawList::AddCircleFilled(const ImVec2& center, float radius, ImU32 col, 
 // Guaranteed to honor 'num_segments'
 void ImDrawList::AddNgon(const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
+    if ((col & IM_COL32_A_MASK) == 0)
+        return;
+#endif
+    if (num_segments <= 2)
         return;
 
     // Because we are filling a closed shape we remove 1 from the count of segments/points
@@ -1554,7 +1627,14 @@ void ImDrawList::AddNgon(const ImVec2& center, float radius, ImU32 col, int num_
 // Guaranteed to honor 'num_segments'
 void ImDrawList::AddNgonFilled(const ImVec2& center, float radius, ImU32 col, int num_segments)
 {
-    if ((col & IM_COL32_A_MASK) == 0 || num_segments <= 2)
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
+    if ((col & IM_COL32_A_MASK) == 0)
+        return;
+#endif
+    if (num_segments <= 2)
         return;
 
     // Because we are filling a closed shape we remove 1 from the count of segments/points
@@ -1566,8 +1646,13 @@ void ImDrawList::AddNgonFilled(const ImVec2& center, float radius, ImU32 col, in
 // Ellipse
 void ImDrawList::AddEllipse(const ImVec2& center, float radius_x, float radius_y, ImU32 col, float rot, int num_segments, float thickness)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     if (num_segments <= 0)
         num_segments = _CalcCircleAutoSegmentCount(ImMax(radius_x, radius_y)); // A bit pessimistic, maybe there's a better computation to do here.
@@ -1580,8 +1665,13 @@ void ImDrawList::AddEllipse(const ImVec2& center, float radius_x, float radius_y
 
 void ImDrawList::AddEllipseFilled(const ImVec2& center, float radius_x, float radius_y, ImU32 col, float rot, int num_segments)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     if (num_segments <= 0)
         num_segments = _CalcCircleAutoSegmentCount(ImMax(radius_x, radius_y)); // A bit pessimistic, maybe there's a better computation to do here.
@@ -1595,8 +1685,13 @@ void ImDrawList::AddEllipseFilled(const ImVec2& center, float radius_x, float ra
 // Cubic Bezier takes 4 controls points
 void ImDrawList::AddBezierCubic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     PathLineTo(p1);
     PathBezierCubicCurveTo(p2, p3, p4, num_segments);
@@ -1606,8 +1701,13 @@ void ImDrawList::AddBezierCubic(const ImVec2& p1, const ImVec2& p2, const ImVec2
 // Quadratic Bezier takes 3 controls points
 void ImDrawList::AddBezierQuadratic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness, int num_segments)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     PathLineTo(p1);
     PathBezierQuadraticCurveTo(p2, p3, num_segments);
@@ -1616,8 +1716,13 @@ void ImDrawList::AddBezierQuadratic(const ImVec2& p1, const ImVec2& p2, const Im
 
 void ImDrawList::AddText(const ImFont* font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     if (text_end == NULL)
         text_end = text_begin + strlen(text_begin);
@@ -1650,8 +1755,13 @@ void ImDrawList::AddText(const ImVec2& pos, ImU32 col, const char* text_begin, c
 
 void ImDrawList::AddImage(ImTextureID user_texture_id, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min, const ImVec2& uv_max, ImU32 col)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     const bool push_texture_id = user_texture_id != _CmdHeader.TextureId;
     if (push_texture_id)
@@ -1666,8 +1776,13 @@ void ImDrawList::AddImage(ImTextureID user_texture_id, const ImVec2& p_min, cons
 
 void ImDrawList::AddImageQuad(ImTextureID user_texture_id, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, const ImVec2& uv1, const ImVec2& uv2, const ImVec2& uv3, const ImVec2& uv4, ImU32 col)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     const bool push_texture_id = user_texture_id != _CmdHeader.TextureId;
     if (push_texture_id)
@@ -1682,8 +1797,13 @@ void ImDrawList::AddImageQuad(ImTextureID user_texture_id, const ImVec2& p1, con
 
 void ImDrawList::AddImageRounded(ImTextureID user_texture_id, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min, const ImVec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags)
 {
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
     if ((col & IM_COL32_A_MASK) == 0)
         return;
+#endif
 
     flags = FixRectCornerFlags(flags);
     if (rounding < 0.5f || (flags & ImDrawFlags_RoundCornersMask_) == ImDrawFlags_RoundCornersNone)
