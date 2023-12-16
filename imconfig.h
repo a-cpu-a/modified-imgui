@@ -54,6 +54,10 @@
 //#define IMGUI_INCLUDE_IMGUI_USER_H
 //#define IMGUI_USER_H_FILENAME         "my_folder/my_imgui_user.h"
 
+//---- Customize the navigation highlight
+#define IMGUI_NAV_HIGHLIGHT_THICKNESS 4.0f
+#define IMGUI_NAV_HIGHLIGHT_DISTANCE 5.0f
+
 //---- Pack colors to BGRA8 instead of RGBA8 (to avoid converting from one to another)
 //#define IMGUI_USE_BGRA_PACKED_COLOR
 
