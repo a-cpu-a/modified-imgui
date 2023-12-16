@@ -57,6 +57,9 @@
 //---- Pack colors to BGRA8 instead of RGBA8 (to avoid converting from one to another)
 //#define IMGUI_USE_BGRA_PACKED_COLOR
 
+//---- Use premultiplied alpha for rendering
+#define IMGUI_USE_PREMULTIPLIED_ALPHA
+
 //---- Use 32-bit for ImWchar (default is 16-bit) to support Unicode planes 1-16. (e.g. point beyond 0xFFFF like emoticons, dingbats, symbols, shapes, ancient languages, etc...)
 #define IMGUI_USE_WCHAR32
 
