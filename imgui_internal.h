@@ -282,6 +282,7 @@ namespace ImStb
 #define IM_STRINGIFY_HELPER(_X)         #_X
 #define IM_STRINGIFY(_X)                IM_STRINGIFY_HELPER(_X)                                 // Preprocessor idiom to stringify e.g. an integer.
 
+#define IM_GAMMA_CORRECT_COL(_X)          ImVec4(ImPow(_X.x,2.2f),ImPow(_X.y,2.2f),ImPow(_X.z,2.2f),_X.w)
 #define IM_PREMULTIPLY_COL(_X)          ImVec4(_X.x*_X.w,_X.y*_X.w,_X.z*_X.w,_X.w)
 #ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
 #define IM_MAKE_OPAQUE(_X)              ImUndoPremultiply(_X)

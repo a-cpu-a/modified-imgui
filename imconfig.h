@@ -61,6 +61,9 @@
 //---- Pack colors to BGRA8 instead of RGBA8 (to avoid converting from one to another)
 //#define IMGUI_USE_BGRA_PACKED_COLOR
 
+//---- Should imgui gamma correct its own colors (TODO: color edit)
+#define IMGUI_GAMMA_CORRECT_COLORS
+
 //---- Use premultiplied alpha for rendering
 #define IMGUI_USE_PREMULTIPLIED_ALPHA
 

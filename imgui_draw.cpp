@@ -179,6 +179,14 @@ void ImGui::PremultiplyStyleColors(ImVec4* colors)
         colors[i] = IM_PREMULTIPLY_COL(color);
     }
 }
+void ImGui::GammaCorrectStyleColors(ImVec4* colors)
+{
+    for (ImGuiCol i = 0; i <= ImGuiCol_COUNT; i++)
+    {
+        const ImVec4 color = colors[i];
+        colors[i] = IM_GAMMA_CORRECT_COL(color);
+    }
+}
 
 void ImGui::StyleColorsDark(ImGuiStyle* dst)
 {
@@ -241,6 +249,9 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
+#ifdef IMGUI_GAMMA_CORRECT_COLORS
+    ImGui::GammaCorrectStyleColors(colors);
+#endif
 #ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
     ImGui::PremultiplyStyleColors(colors);
 #endif
@@ -307,6 +318,9 @@ void ImGui::StyleColorsClassic(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 
+#ifdef IMGUI_GAMMA_CORRECT_COLORS
+    ImGui::GammaCorrectStyleColors(colors);
+#endif
 #ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
     ImGui::PremultiplyStyleColors(colors);
 #endif
@@ -374,6 +388,9 @@ void ImGui::StyleColorsLight(ImGuiStyle* dst)
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 
+#ifdef IMGUI_GAMMA_CORRECT_COLORS
+    ImGui::GammaCorrectStyleColors(colors);
+#endif
 #ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
     ImGui::PremultiplyStyleColors(colors);
 #endif
