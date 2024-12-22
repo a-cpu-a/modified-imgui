@@ -2154,7 +2154,14 @@ void ImTriangulator::ReclassifyNode(ImTriangulatorNode* n1)
 // Caller can build AABB of points, and avoid filling if 'draw_list->_CmdHeader.ClipRect.Overlays(points_bb) == false')
 void ImDrawList::AddConcavePolyFilled(const ImVec2* points, const int points_count, ImU32 col)
 {
-    if (points_count < 3 || (col & IM_COL32_A_MASK) == 0)
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+    if (col == 0)
+        return;
+#else
+    if ((col & IM_COL32_A_MASK) == 0)
+        return;
+#endif
+    if (points_count < 3)
         return;
 
     const ImVec2 uv = _Data->TexUvWhitePixel;
@@ -2164,7 +2171,11 @@ void ImDrawList::AddConcavePolyFilled(const ImVec2* points, const int points_cou
     {
         // Anti-aliased Fill
         const float AA_SIZE = _FringeScale;
+#ifdef IMGUI_USE_PREMULTIPLIED_ALPHA
+        const ImU32 col_trans = 0;
+#else
         const ImU32 col_trans = col & ~IM_COL32_A_MASK;
+#endif
         const int idx_count = (points_count - 2) * 3 + points_count * 6;
         const int vtx_count = (points_count * 2);
         PrimReserve(idx_count, vtx_count);
