@@ -63,7 +63,7 @@
 #define IMGUI_NAV_HIGHLIGHT_THICKNESS 4.0f
 #define IMGUI_NAV_HIGHLIGHT_DISTANCE 5.0f
 
-//---- Should imgui gamma correct its own colors (TODO: color edit)
+//---- Should imgui gamma correct its own colors
 #define IMGUI_GAMMA_CORRECT_COLORS
 
 //---- Use premultiplied alpha for rendering
